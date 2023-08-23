@@ -1,0 +1,25 @@
+keep_columns:
+    - lat
+    - lon
+    - l1
+    - l2
+    - l3
+    - rooms              
+    - surface_total
+    - surface_covered    
+    - property_type       
+    - operation_type
+drop_rows:
+  countries: 
+    - Brasil
+    - Estados Unidos
+    - Estados Unidos de América
+  nan:
+    - price
+    - currency
+    - lat
+    - lon
+outliers_percentile:
+  price:
+    lower: 5
+    upper: 95

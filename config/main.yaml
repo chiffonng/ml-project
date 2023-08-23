@@ -1,0 +1,11 @@
+data:
+  dir: ./data/
+  raw: 
+    dir: ./data/raw/
+    path: ./data/raw/*crude.csv.zip
+  processed: 
+    dir: ./data/processed/
+    path: ./data/processed/processed.csv
+
+model:
+  metric: accuracy
