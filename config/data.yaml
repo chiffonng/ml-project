@@ -9,6 +9,8 @@ keep_columns:
     - surface_covered    
     - property_type       
     - operation_type
+    - price
+    - currency
 drop_rows:
   countries: 
     - Brasil
