@@ -3,10 +3,8 @@ keep_columns:
     - lon
     - l1
     - l2
-    - l3
-    - rooms              
+    - l3           
     - surface_total
-    - surface_covered    
     - property_type       
     - operation_type
     - price
@@ -21,6 +19,12 @@ drop_rows:
     - currency
     - lat
     - lon
+  duplicates:
+    - lat 
+    - lon
+    - surface_total
+    - property_type
+    - price
 outliers_percentile:
   price:
     lower: 5

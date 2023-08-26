@@ -24,7 +24,7 @@ class DataWrangler:
     
     def __post_init__(self):
         if os.path.exists(self.processed_data_path):
-            self.df = pd.read_csv(self.processed_data_path, index_col = "id")
+            self.df = pd.read_csv(self.processed_data_path, index=False)
         else:
             self.df = None
     
@@ -85,10 +85,10 @@ class DataWrangler:
         df = df[data_conf.keep_columns]
         
         # Drop irrelevant rows
-        df = self.__drop_rows(df)
+        df = self._drop_rows(df)
         
         # Standardize price
-        df = self.__convert_price_to_usd(df)
+        df = self._convert_price_to_usd(df)
         
         self.df = df
         return self.df
@@ -104,9 +104,9 @@ class DataWrangler:
         
         os.makedirs(os.path.dirname(self.processed_data_path), exist_ok=True)
             
-        df.to_csv(self.processed_data_path, index="id")
+        df.to_csv(self.processed_data_path, index=False)
 
-    def __drop_rows(self, df:pd.DataFrame) -> pd.DataFrame:
+    def _drop_rows(self, df:pd.DataFrame) -> pd.DataFrame:
         """Drops irrelevant rows.
         Arguments:
             df (pandas.DataFrame): Raw data.
@@ -119,9 +119,12 @@ class DataWrangler:
         # Delete rows with NaN values 
         df = df.dropna(subset=data_conf.drop_rows.nan, how = 'any', ignore_index=True)
         
+        # Drop duplicates based on lat and lon
+        df = df.drop_duplicates(subset=data_conf.drop_rows.duplicates, keep='first', ignore_index=True)
+        
         return df
 
-    def __convert_price_to_usd(self, df:pd.DataFrame) -> pd.DataFrame:
+    def _convert_price_to_usd(self, df:pd.DataFrame) -> pd.DataFrame:
         """Standardizes price.
         Arguments:
             df (pandas.DataFrame): Raw data.
@@ -129,7 +132,7 @@ class DataWrangler:
             df (pandas.DataFrame): Data with standardized price.
         """
         # Standardize currency to USD 
-        df["price_usd"] = df.apply(lambda x: self.__convert_to_usd(x["price"], x["currency"]), axis=1, result_type="expand")
+        df["price_usd"] = df.apply(lambda x: self._convert_to_usd(x["price"], x["currency"]), axis=1, result_type="expand")
         
         # Drop "price" and "currency" columns
         df = df.drop(columns = ["price", "currency"])
@@ -141,7 +144,7 @@ class DataWrangler:
     
         return df
 
-    def __convert_to_usd(self, amount:float, currency_code:str) -> float:
+    def _convert_to_usd(self, amount:float, currency_code:str) -> float:
         """Converts the amount to USD using 
         average exchange rate to USD for 2020
 
@@ -164,5 +167,5 @@ class DataWrangler:
 
 if __name__ == "__main__":
     data_wrangler = DataWrangler()
-    data_wrangler.load_data(use_exist=True)
+    data_wrangler.load_data(use_exist=False)
     data_wrangler.df.info()
